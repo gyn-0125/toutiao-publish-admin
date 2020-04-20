@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <h1>黑马头条内容发布系统</h1>
-    <router-view />
+    <!-- 路由出口 -->
+    <router-view/>
   </div>
 </template>
 
@@ -9,9 +9,11 @@
 export default {
   name: 'App',
   data () {
-    return {}
+    return {
+    }
   },
-  methods: {},
+  methods: {
+  },
   created () {}
 }
 </script>
