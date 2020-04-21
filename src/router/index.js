@@ -21,7 +21,7 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: '/', // 默认 子路由
+        path: '', // 默认 子路由
         name: 'home',
         component: Home
       }
