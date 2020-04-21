@@ -4,21 +4,21 @@
       <div class="login-head">
         <div class="logo"></div>
       </div>
-      <el-form class="login-form" ref="form" :model="user">
-        <el-form-item>
+      <el-form class="login-form" ref="login-form" :model="user" :rules="formRules">
+        <el-form-item prop="mobile">
           <el-input
             v-model="user.mobile"
             placeholder="请输入手机号"
           ></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="code">
           <el-input
             v-model="user.code"
             placeholder="请输入验证码"
           ></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="checked">我已阅读并同意用户协议和隐私条款</el-checkbox>
+        <el-form-item prop="agree">
+          <el-checkbox v-model="user.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+import { login } from '@/api/user'
 
 export default {
   name: 'LoginIndex',
@@ -42,10 +42,33 @@ export default {
     return {
       user: {
         mobile: '', // 手机号
-        code: '' // 验证码
+        code: '', // 验证码
+        agree: false // 是否同意协议
       },
-      checked: false, // 是否同意协议的选中状态
-      loginLoading: false // 登录的 loading 状态
+      // checked: false, // 是否同意协议的选中状态
+      loginLoading: false, // 登录的 loading 状态
+      formRules: { // 表单验证规则
+        mobile: [
+          { required: true, message: '手机号不能为空', trigger: 'change' },
+          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
+        ],
+        code: [
+          { required: true, message: '验证码不能为空', trigger: 'change' },
+          { pattern: /^\d{6}$/, message: '请输入正确的验证码格式', trigger: 'change' }
+        ],
+        agree: [
+          {
+            validator: (rule, value, callback) => {
+              if (value) {
+                callback()
+              } else {
+                callback(new Error('请同意用户协议'))
+              }
+            },
+            trigger: 'change'
+          }
+        ]
+      }
     }
   },
   computed: {},
@@ -55,33 +78,39 @@ export default {
   methods: {
     onLogin () {
       // 获取表单数据（根据接口要求绑定数据）
-      const user = this.user
+      // const user = this.user
       // 表单验证
-      // 验证通过，提交登录
-
+      this.$refs['login-form'].validate((valid, err) => {
+        // 如果表单验证失败，停止请求
+        if (!valid) {
+          return
+        }
+        // 验证通过，请求登录
+        this.login()
+      })
+    },
+    login () {
       // 开启登录中 loading...
       this.loginLoading = true
 
-      request({
-        method: 'POST',
-        url: '/mp/v1_0/authorizations',
-        // data 用来设置POST请求体
-        data: user
-      }).then(res => {
+      // 对于代码中的请求操作
+      // 1. 接口请求可能需要重用
+      // 2. 实际工作中，接口非常容易变动
+      // 我们建议的做法是把所有的请求都封装成函数然后同意组织在模块中使用
+      // 这样的做法好处是：管理维护更方便，更好重用
+      login(this.user).then(res => {
         // console.log(res)
         // 登录成功
         this.$message({
           message: '登录成功',
           type: 'success'
         })
-
         // 关闭 loading
         this.loginLoading = false
       }).catch(err => {
         console.log('登录失败', err)
         // 登录失败
         this.$message.error('登录失败，手机号或验证码错误')
-
         // 关闭 loading
         this.loginLoading = false
       })
