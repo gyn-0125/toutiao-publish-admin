@@ -1,15 +1,17 @@
 <template>
-  <div class="home-container">home首页</div>
+  <div class="layout-container">
+    <div>顶部导航栏</div>
+    <div>侧边导航栏</div>
+  </div>
 </template>
 
 <script>
 export default {
-  // 有名字的组件更有意义，便于调试
-  name: 'HomeIndex',
+  name: '',
   props: {},
   components: {},
   data () {
-    return {}
+   return {}
   },
   computed: {},
   watch: {},

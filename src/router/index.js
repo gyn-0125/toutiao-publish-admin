@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 // 好处：它不受当前文件路径影响
 import Login from '@/views/login'
 import Home from '@/views/home'
+import Layout from '@/views/layout'
 
 Vue.use(VueRouter)
 
@@ -16,9 +17,15 @@ const routes = [
   },
   {
     path: '/',
-    // 路由的name
-    name: 'home',
-    component: Home
+    name: 'layout',
+    component: Layout,
+    children: [
+      {
+        path: '/', // 默认 子路由
+        name: 'home',
+        component: Home
+      }
+    ]
   }
 ]
 
