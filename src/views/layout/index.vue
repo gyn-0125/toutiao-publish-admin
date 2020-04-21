@@ -4,7 +4,9 @@
       <app-aside class="aside-menu" />
     </el-aside>
     <el-container>
-      <el-header class="header">Header</el-header>
+      <el-header class="header">
+        <app-header />
+      </el-header>
       <el-main class="main">
         <router-view />
       </el-main>
@@ -14,12 +16,14 @@
 
 <script>
 import AppAside from './components/aside'
+import AppHeader from './components/header'
 
 export default {
-  name: '',
+  name: 'LayoutIndex',
   props: {},
   components: {
-    AppAside
+    AppAside,
+    AppHeader
   },
   data () {
     return {}
@@ -48,9 +52,12 @@ export default {
   }
 }
 .header {
-    background-color: #b3c0d1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
 }
 .main {
-    background-color: #e9eef3;
+  background-color: #e9eef3;
 }
 </style>
