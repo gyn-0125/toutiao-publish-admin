@@ -15,8 +15,7 @@ export default {
   watch: {},
   methods: {},
   created () {},
-  mounted () {},
-  beforeDestroy () {}
+  mounted () {}
 }
 </script>
 
