@@ -9,6 +9,9 @@
     :collapse="isCollapse"
   >
     <el-menu-item index="/">
+      <img class="logo-admin" src="./logo_admin.png" alt="">
+    </el-menu-item>
+    <el-menu-item index="/">
       <i class="el-icon-s-home"></i>
       <span slot="title">首页</span>
     </el-menu-item>
@@ -57,6 +60,10 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.logo-admin{
+  width: 135px;
+  height: 32px;
+}
 .nav-menu {
   .iconfont {
     margin-right: 10px;
