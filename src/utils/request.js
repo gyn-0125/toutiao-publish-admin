@@ -16,6 +16,25 @@ const request = axios.create({
 // req1.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 
 // 请求拦截器
+request.interceptors.request.use(
+  // 任何所有请求都会经过这里
+  // config 是当前请求相关的配置信息对象
+  // config 是可以修改的
+  function (config) {
+    const user = JSON.parse(window.localStorage.getItem('user'))
+    // 如果有登录信息，则统一 设置 token
+    if (user) {
+      config.headers.Authorization = `Bearer ${user.token}`
+    }
+
+    // return config 之后的请求才会真正的发送出去
+    return config
+  },
+  // 请求失败
+  function (error) {
+    return Promise.reject(error)
+  }
+)
 
 // 响应拦截器
 
