@@ -1,6 +1,6 @@
 <template>
   <div class="article-container">
-    <el-card class="box-card filter-card">
+    <el-card class="filter-card">
       <div slot="header" class="clearfix">
         <!-- 面包路径导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -14,7 +14,7 @@
         :model="form"
         label-width="40px"
         size="mini"
-        v-loading="loading">
+      >
         <el-form-item label="状态">
           <el-radio-group v-model="status">
             <el-radio :label="null">全部</el-radio>
@@ -56,8 +56,8 @@
         <el-form-item>
           <el-button
             type="primary"
-            @click="loadArticles(1)"
             :disabled="loading"
+            @click="loadArticles(1)"
           >查询</el-button>
         </el-form-item>
       </el-form>
@@ -82,7 +82,7 @@
             <el-image
               style="width: 100px; height: 100px"
               :src="scope.row.cover.images[0]"
-              :fit="fit"
+              fit="cover"
               lazy
             >
               <div slot="placeholder" class="image-slot">
@@ -122,7 +122,7 @@
         </el-table-column>
         <el-table-column
           label="操作">
-          <template>
+          <template slot-scope="scope">
             <el-button
               size="mini"
               circle
@@ -134,6 +134,7 @@
               circle
               icon="el-icon-delete"
               type="danger"
+              @click="onDeleteArticle(scope.row.id)"
             ></el-button>
           </template>
         </el-table-column>
@@ -146,6 +147,7 @@
         :total="totalCount"
         :page-size = "pageSize"
         :disabled = "loading"
+        :current-page.sync="page"
         @current-change = "onCurrentChange"
       >
       </el-pagination>
@@ -156,7 +158,8 @@
 <script>
 import {
   getArticles,
-  getArticlesChannels
+  getArticlesChannels,
+  deleteArticle
 } from '@/api/article'
 
 export default {
@@ -189,14 +192,15 @@ export default {
       channels: [], // 查询频道列表
       channelId: null, // 查询文章的频道
       rangeDate: [], // 筛选日期
-      loading: true // 表单数据加载中
+      loading: true, // 表单数据加载中
+      page: 1 // 当前页码
     }
   },
   computed: {},
   watch: {},
   created () {
-    this.loadArticles(1)
     this.loadChannels()
+    this.loadArticles(1)
   },
   mounted () {},
   methods: {
@@ -229,6 +233,24 @@ export default {
       getArticlesChannels().then(res => {
         // console.log(res)
         this.channels = res.data.data.channels
+      })
+    },
+    onDeleteArticle (articleId) {
+      this.$confirm('确认删除吗？', '删除提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确认执行这里
+        deleteArticle(articleId.toString()).then(res => {
+          // 删除成功，更新当前页的文章数据列表
+          this.loadArticles(this.page)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }

@@ -2,6 +2,7 @@
  * 基于axios 封装的请求模块
 */
 import axios from 'axios'
+import JSONbig from 'json-bigint'
 
 // axios()
 // axios.get()
@@ -9,7 +10,17 @@ import axios from 'axios'
 
 // 通过axios这个实例去发送请求，把需要的配置配置给这个实例来处理
 const request = axios.create({
-  baseURL: 'http://ttapi.research.itcast.cn/' // 请求的基础路径
+  baseURL: 'http://ttapi.research.itcast.cn/', // 请求的基础路径
+  transformResponse: [function (data) {
+    try {
+      // 转换成功，则直接把结果返回
+      return JSONbig.parse(data)
+    } catch (err) {
+      console.log('转换失败', err)
+      // 转换失败，进入这里
+      return data
+    }
+  }]
 })
 
 // const req1 = axios create()
