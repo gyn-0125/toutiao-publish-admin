@@ -70,7 +70,17 @@
           prop="date"
           label="封面">
           <template slot-scope="scope">
-            <img
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="scope.row.cover.images[0]"
+              :fit="fit"
+              lazy
+            >
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
+              </div>
+            </el-image>
+            <!-- <img
               v-if="scope.row.cover.images[0]"
               class="article-cover"
               :src="scope.row.cover.images[0]"
@@ -78,7 +88,7 @@
             <img
               v-else
               class="article-cover"
-              src="./pic_bg.png" alt="">
+              src="./pic_bg.png" alt=""> -->
           </template>
         </el-table-column>
         <el-table-column
@@ -167,7 +177,7 @@ export default {
       pageSize: 10, // 每页大小
       status: null, // 查询文章的状态，不传就是全部
       channels: [], // 查询频道列表
-      channelId: null
+      channelId: null // 查询文章的频道
     }
   },
   computed: {},
