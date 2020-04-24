@@ -13,7 +13,8 @@
         ref="form"
         :model="form"
         label-width="40px"
-        size="mini">
+        size="mini"
+        v-loading="loading">
         <el-form-item label="状态">
           <el-radio-group v-model="status">
             <el-radio :label="null">全部</el-radio>
@@ -53,7 +54,11 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadArticles(1)">查询</el-button>
+          <el-button
+            type="primary"
+            @click="loadArticles(1)"
+            :disabled="loading"
+          >查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -68,7 +73,8 @@
         stripe
         style="width: 100%"
         class="list-table"
-        size="mini">
+        size="mini"
+        v-loading="loading">
         <el-table-column
           prop="date"
           label="封面">
@@ -138,8 +144,9 @@
         layout="prev, pager, next"
         background
         :total="totalCount"
-        @current-change = "onCurrentChange"
         :page-size = "pageSize"
+        :disabled = "loading"
+        @current-change = "onCurrentChange"
       >
       </el-pagination>
     </el-card>
@@ -181,7 +188,8 @@ export default {
       status: null, // 查询文章的状态，不传就是全部
       channels: [], // 查询频道列表
       channelId: null, // 查询文章的频道
-      rangeDate: [] // 筛选日期
+      rangeDate: [], // 筛选日期
+      loading: true // 表单数据加载中
     }
   },
   computed: {},
@@ -193,6 +201,8 @@ export default {
   mounted () {},
   methods: {
     loadArticles (page = 1) {
+      // 展示加载中
+      this.loading = true
       getArticles({
         page,
         per_page: this.pageSize,
@@ -205,6 +215,8 @@ export default {
         this.articles = results
         this.totalCount = totalCount
         // console.log(res)
+        // 关闭加载中的loading
+        this.loading = false
       })
     },
     onSubmit () {
