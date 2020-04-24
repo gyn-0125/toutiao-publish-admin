@@ -113,7 +113,10 @@
       <!-- 列表分页 -->
       <el-pagination
         layout="prev, pager, next"
-        :total="1000">
+        background
+        :total="totalCount"
+        @current-change = "onCurrentChange"
+      >
       </el-pagination>
     </el-card>
   </div>
@@ -145,24 +148,33 @@ export default {
         { status: 2, text: '审核通过', type: 'success' },
         { status: 3, text: '审核失败', type: 'warning' },
         { status: 4, text: '已删除', type: 'danger' }
-      ]
+      ],
+      totalCount: []
     }
   },
   computed: {},
   watch: {},
   created () {
-    this.loadArticles()
+    this.loadArticles(1)
   },
   mounted () {},
   methods: {
-    loadArticles () {
-      getArticles().then(res => {
-        this.articles = res.data.data.results
+    loadArticles (page = 1) {
+      getArticles({
+        page,
+        per_page: 10
+      }).then(res => {
+        const { results, total_count: totalCount } = res.data.data
+        this.articles = results
+        this.totalCount = totalCount
         // console.log(res)
       })
     },
     onSubmit () {
       console.log('submit!')
+    },
+    onCurrentChange (page) {
+      this.loadArticles(page)
     }
   }
 }
