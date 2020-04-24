@@ -59,6 +59,17 @@
         <el-table-column
           prop="date"
           label="封面">
+          <template slot-scope="scope">
+            <img
+              v-if="scope.row.cover.images[0]"
+              class="article-cover"
+              :src="scope.row.cover.images[0]"
+              alt="">
+            <img
+              v-else
+              class="article-cover"
+              src="./pic_bg.png" alt="">
+          </template>
         </el-table-column>
         <el-table-column
           prop="title"
@@ -163,5 +174,9 @@ export default {
 }
 .list-table {
   margin-bottom: 20px;
+}
+.article-cover {
+  width: 60px;
+  background-size: cover;
 }
 </style>
