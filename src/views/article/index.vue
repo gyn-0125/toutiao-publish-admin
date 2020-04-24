@@ -15,13 +15,13 @@
         label-width="40px"
         size="mini">
         <el-form-item label="状态">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="全部"></el-radio>
-            <el-radio label="审核"></el-radio>
-            <el-radio label="待审核"></el-radio>
-            <el-radio label="审核通过"></el-radio>
-            <el-radio label="审核失败"></el-radio>
-            <el-radio label="删除"></el-radio>
+          <el-radio-group v-model="status">
+            <el-radio :label="null">全部</el-radio>
+            <el-radio :label="0">草稿</el-radio>
+            <el-radio :label="1">待审核</el-radio>
+            <el-radio :label="2">审核通过</el-radio>
+            <el-radio :label="3">审核失败</el-radio>
+            <el-radio :label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
@@ -40,14 +40,14 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="loadArticles(1)">查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        根据筛选条件共查询到 46147 条结果：
+        根据筛选条件共查询到 {{ totalCount }} 条结果：
       </div>
       <!-- 数据列表 -->
       <el-table
@@ -150,8 +150,9 @@ export default {
         { status: 3, text: '审核失败', type: 'warning' },
         { status: 4, text: '已删除', type: 'danger' }
       ],
-      totalCount: 0,
-      pageSize: 10
+      totalCount: 0, // 总数据条数
+      pageSize: 10, // 每页大小
+      status: null // 查询文章的状态，不传就是全部
     }
   },
   computed: {},
@@ -164,7 +165,8 @@ export default {
     loadArticles (page = 1) {
       getArticles({
         page,
-        per_page: this.pageSize
+        per_page: this.pageSize,
+        status: this.status
       }).then(res => {
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
