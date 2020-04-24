@@ -42,11 +42,14 @@
         </el-form-item>
         <el-form-item label="日期">
           <el-date-picker
-            v-model="form.date1"
+            v-model="rangeDate"
             type="datetimerange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-time="['12:00:00']">
+            :default-time="['12:00:00']"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -177,7 +180,8 @@ export default {
       pageSize: 10, // 每页大小
       status: null, // 查询文章的状态，不传就是全部
       channels: [], // 查询频道列表
-      channelId: null // 查询文章的频道
+      channelId: null, // 查询文章的频道
+      rangeDate: [] // 筛选日期
     }
   },
   computed: {},
@@ -193,7 +197,9 @@ export default {
         page,
         per_page: this.pageSize,
         status: this.status,
-        channel_id: this.channelId
+        channel_id: this.channelId,
+        begin_pubdate: this.rangeDate ? this.rangeDate[0] : null, // 开始日期
+        end_pubdate: this.rangeDate ? this.rangeDate[1] : null // 截止日期
       }).then(res => {
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
