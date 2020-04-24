@@ -116,6 +116,7 @@
         background
         :total="totalCount"
         @current-change = "onCurrentChange"
+        :page-size = "pageSize"
       >
       </el-pagination>
     </el-card>
@@ -149,7 +150,8 @@ export default {
         { status: 3, text: '审核失败', type: 'warning' },
         { status: 4, text: '已删除', type: 'danger' }
       ],
-      totalCount: []
+      totalCount: 0,
+      pageSize: 10
     }
   },
   computed: {},
@@ -162,7 +164,7 @@ export default {
     loadArticles (page = 1) {
       getArticles({
         page,
-        per_page: 10
+        per_page: this.pageSize
       }).then(res => {
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
