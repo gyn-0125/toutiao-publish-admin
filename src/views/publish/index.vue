@@ -45,7 +45,8 @@
 <script>
 import {
   getArticlesChannels,
-  addArticle
+  addArticle,
+  getArticle
 } from '@/api/article'
 
 export default {
@@ -70,6 +71,10 @@ export default {
   watch: {},
   created () {
     this.loadChannels()
+    // 发布和修改用同一个组件，判断
+    if (this.$route.query.id) {
+      this.loadArticle()
+    }
   },
   mounted () {},
   methods: {
@@ -84,6 +89,14 @@ export default {
           message: '发布成功',
           type: 'success'
         })
+      })
+    },
+    loadArticle () {
+      // console.log('loadArticle')
+      // 请求获取数据
+      getArticle(this.$route.query.id).then(res => {
+        // 模板绑定显示
+        this.article = res.data.data
       })
     }
   }
