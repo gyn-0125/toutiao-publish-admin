@@ -54,7 +54,7 @@ export const addArticle = (data, draft = false) => {
 */
 export const updateArticle = (articleId, data, draft = false) => {
   return request({
-    method: 'UPDATE',
+    method: 'PUT',
     url: `/mp/v1_0/articles/${articleId}`,
     params: {
       draft // 是否存为草稿

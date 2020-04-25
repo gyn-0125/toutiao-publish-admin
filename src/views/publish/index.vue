@@ -5,7 +5,7 @@
         <!-- 面包路径导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-          <el-breadcrumb-item><a href="/">发布文章</a></el-breadcrumb-item>
+          <el-breadcrumb-item>{{ $route.query.id ? '修改文章' : '发布文章' }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <el-form ref="form" :model="article" label-width="80px">
@@ -46,7 +46,8 @@
 import {
   getArticlesChannels,
   addArticle,
-  getArticle
+  getArticle,
+  updateArticle
 } from '@/api/article'
 
 export default {
@@ -84,18 +85,30 @@ export default {
       })
     },
     onPublish (draft = false) {
-      addArticle(this.article, draft).then(res => {
-        this.$message({
-          message: '发布成功',
-          type: 'success'
+      const articleId = this.$route.query.id
+      if (articleId) {
+        updateArticle(articleId, this.article, draft).then(res => {
+          // console.log(res)
+          this.$message({
+            message: `${draft ? '存入草稿' : '发布'}成功`,
+            type: 'success'
+          })
+          this.$router.push('/article')
         })
-      })
+      } else {
+        addArticle(this.article, draft).then(res => {
+          this.$message({
+            message: '发布成功',
+            type: 'success'
+          })
+        })
+      }
     },
     loadArticle () {
       // console.log('loadArticle')
       // 请求获取数据
       getArticle(this.$route.query.id).then(res => {
-        // 模板绑定显示
+        // 模板绑定展示
         this.article = res.data.data
       })
     }
