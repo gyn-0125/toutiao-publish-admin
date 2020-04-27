@@ -8,7 +8,7 @@
           <el-breadcrumb-item>素材管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div style="padding-bottom: 20px;">
+      <div class="action-head">
         <el-radio-group
           v-model="collect"
           size="mini"
@@ -17,6 +17,11 @@
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
+        <el-button
+            size="mini"
+            type="success"
+            @click="dialogUploadVisible = true"
+        >上传素材</el-button>
       </div>
       <!-- 素材列表 -->
       <el-row :gutter="10">
@@ -73,4 +78,10 @@ export default {
 }
 </script>
 
-<style lang='less' scoped></style>
+<style lang='less' scoped>
+.action-head {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
