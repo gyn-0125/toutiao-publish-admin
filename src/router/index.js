@@ -3,12 +3,12 @@ import VueRouter from 'vue-router'
 
 // @ 表示src目录
 // 好处：它不受当前文件路径影响
-import Login from '@/views/login'
-import Home from '@/views/home'
-import Layout from '@/views/layout'
-import Article from '@/views/article'
-import Publish from '@/views/publish'
-import Image from '@/views/image'
+import Login from '@/views/login/'
+import Home from '@/views/home/'
+import Layout from '@/views/layout/'
+import Article from '@/views/article/'
+import Publish from '@/views/publish/'
+import Image from '@/views/image/'
 
 Vue.use(VueRouter)
 
