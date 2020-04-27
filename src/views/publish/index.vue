@@ -8,12 +8,23 @@
           <el-breadcrumb-item>{{ $route.query.id ? '修改文章' : '发布文章' }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <el-form ref="form" :model="article" label-width="80px">
-        <el-form-item label="标题">
+      <el-form
+        ref="publish-form"
+        :rules="formRules"
+        :model="article"
+        label-width="80px"
+      >
+        <el-form-item label="标题" prop="title">
           <el-input v-model="article.title"></el-input>
         </el-form-item>
-        <el-form-item label="内容">
-          <el-input type="textarea" v-model="article.content"></el-input>
+        <el-form-item label="内容" prop="content">
+          <!-- <el-input type="textarea" v-model="article.content"></el-input> -->
+          <el-tiptap
+            v-model="article.content"
+            :extensions="extensions"
+            height="350"
+            placeholder="请输入文章内容"
+          ></el-tiptap>
         </el-form-item>
         <el-form-item label="封面">
           <el-radio-group v-model="article.cover.type">
@@ -23,7 +34,7 @@
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道">
+        <el-form-item label="频道" prop="channel_id">
           <el-select v-model="article.channel_id" placeholder="请选择频道">
             <el-option
               :label="channel.name"
@@ -49,11 +60,37 @@ import {
   getArticle,
   updateArticle
 } from '@/api/article'
+import {
+  ElementTiptap,
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Image,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+  TodoItem,
+  TodoList,
+  HorizontalRule,
+  Fullscreen,
+  Preview,
+  CodeBlock,
+  TextColor
+} from 'element-tiptap'
+import 'element-tiptap/lib/index.css'
+import { uploadImage } from '@/api/image'
 
 export default {
   name: 'PublishIndex',
   props: {},
-  components: {},
+  components: {
+    'el-tiptap': ElementTiptap
+  },
   data () {
     return {
       channels: [], // 文章频道列表
@@ -65,6 +102,62 @@ export default {
           images: [] // 封面图片的地址
         },
         channel_id: null
+      },
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 6 }), // 标题
+        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
+        new Image({
+          // 默认会把图片生成 base64 字符串和内容存储在一起，如果需要自定义图片上传
+          uploadRequest (file) {
+            // 如果接口要求 Content-Type 是 multipart/form-data，则请求体必须使用 FormData
+            const fd = new FormData()
+            fd.append('image', file)
+            // 第1个 return 是返回 Promise 对象
+            // axios 本身就是返回 Promise 对象
+            return uploadImage(fd).then(res => {
+              // 这个 return 是返回最后的结果
+              return res.data.data.url
+            })
+          } // 图片的上传方法，返回一个 Promise<url>
+        }),
+        new Underline(), // 下划线
+        new Italic(), // 斜体
+        new Strike(), // 删除线
+        new HorizontalRule(), // 华丽的分割线
+        new ListItem(),
+        new BulletList(), // 无序列表
+        new OrderedList(), // 有序列表
+        new TodoItem(),
+        new TodoList(),
+        new Fullscreen(),
+        new Preview(),
+        new CodeBlock(),
+        new TextColor()
+      ],
+      formRules: {
+        title: [
+          { required: true, message: '请输入文章标题', trigger: 'blur' },
+          { min: 3, max: 30, message: '长度在 5 到 30 字符之间', trigger: 'blur' }
+        ],
+        content: [
+          {
+            validator (rule, value, callback) {
+              if (value === '<p></p>') {
+                // 验证失败
+                callback(new Error('请输入文章内容'))
+              } else {
+                callback()
+              }
+            }
+          },
+          { required: true, message: '请输入文章内容', trigger: 'blur' }
+        ],
+        channel_id: [
+          { required: true, message: '请选择文章频道' }
+        ]
       }
     }
   },
@@ -85,24 +178,29 @@ export default {
       })
     },
     onPublish (draft = false) {
-      const articleId = this.$route.query.id
-      if (articleId) {
-        updateArticle(articleId, this.article, draft).then(res => {
-          // console.log(res)
-          this.$message({
-            message: `${draft ? '存入草稿' : '发布'}成功`,
-            type: 'success'
+      this.$refs['publish-form'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        const articleId = this.$route.query.id
+        if (articleId) {
+          updateArticle(articleId, this.article, draft).then(res => {
+            // console.log(res)
+            this.$message({
+              message: `${draft ? '存入草稿' : '发布'}成功`,
+              type: 'success'
+            })
+            this.$router.push('/article')
           })
-          this.$router.push('/article')
-        })
-      } else {
-        addArticle(this.article, draft).then(res => {
-          this.$message({
-            message: '发布成功',
-            type: 'success'
+        } else {
+          addArticle(this.article, draft).then(res => {
+            this.$message({
+              message: '发布成功',
+              type: 'success'
+            })
           })
-        })
-      }
+        }
+      })
     },
     loadArticle () {
       // console.log('loadArticle')
