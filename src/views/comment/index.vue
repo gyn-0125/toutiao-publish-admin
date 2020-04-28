@@ -8,6 +8,7 @@
           <el-breadcrumb-item>评论管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
+      <!-- 表格内容 -->
       <el-table
         :data="articles"
         class="table-list"
@@ -48,16 +49,21 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页 -->
+      <!--
+        绑定分页
+        current-page 控制激活的页码，初始化是第1页
+        page-sizes 控制可选的每页大小
+      -->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page.sync="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size.sync="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
-      </el-pagination>
+        :total="totalCount"
+        background
+      />
     </el-card>
   </div>
 </template>
@@ -69,12 +75,15 @@ import {
 } from '@/api/article'
 
 export default {
-  name: '',
+  name: 'CommentIndex',
   props: {},
   components: {},
   data () {
     return {
-      articles: []
+      articles: [],
+      totalCount: 0, // 总数据条数
+      pageSize: 10,
+      page: 1 // 当前激活的页码
     }
   },
   computed: {},
@@ -85,14 +94,18 @@ export default {
   mounted () {},
   methods: {
     handleSizeChange () {
-      console.log()
+      this.loadArticles(1)
     },
-    handleCurrentChange () {
-      console.log()
+    handleCurrentChange (page) {
+      // 页码改变，加载指定页码数据
+      this.loadArticles(page)
     },
-    loadArticles () {
+    loadArticles (page = 1) {
+      this.page = page
       getArticles({
-        response_type: 'comment'
+        response_type: 'comment',
+        page, // 当前页码
+        per_page: this.pageSize
       }).then(res => {
         // console.log(res)
         const results = res.data.data.results
@@ -100,6 +113,7 @@ export default {
           article.statusDisabled = false
         })
         this.articles = res.data.data.results
+        this.totalCount = res.data.data.total_count
       })
     },
     onStatusChange (article) {
