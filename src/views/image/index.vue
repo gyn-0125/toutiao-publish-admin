@@ -41,7 +41,13 @@
           >
           </el-image>
           <div class="image-action">
-            <i class="el-icon-star-on"></i>
+            <i
+              :class="{
+                'el-icon-star-on': img.is_collected,
+                'el-icon-star-off': !img.is_collected
+              }"
+              @click="onCollect(img)"
+            ></i>
             <i class="el-icon-delete-solid"></i>
           </div>
         </el-col>
@@ -79,7 +85,10 @@
 </template>
 
 <script>
-import { getImages } from '@/api/image'
+import {
+  getImages,
+  collectImage
+} from '@/api/image'
 
 export default {
   name: 'ImageIndex',
@@ -133,6 +142,11 @@ export default {
     onPageChange (page) {
       // console.log(page)
       this.loadImages(page)
+    },
+    onCollect (img) {
+      collectImage(img.id, !img.is_collected).then(res => {
+        img.is_collected = !img.is_collected
+      })
     }
   }
 }
