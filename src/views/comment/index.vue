@@ -29,7 +29,7 @@
         </el-table-column>
         <el-table-column
           prop="address"
-          label="状态">
+          label="评论状态">
           <template slot-scope="scope">
             {{ scope.row.comment_status ? '正常' : '关闭' }}
           </template>
@@ -41,7 +41,9 @@
             <el-switch
               v-model="scope.row.comment_status"
               active-color="#13ce66"
-              inactive-color="#ff4949">
+              inactive-color="#ff4949"
+              :disabled="scope.row.statusDisabled"
+              @change="onStatusChange(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -61,7 +63,10 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import {
+  getArticles,
+  updateCommentStatus
+} from '@/api/article'
 
 export default {
   name: '',
@@ -69,23 +74,6 @@ export default {
   components: {},
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
       articles: []
     }
   },
@@ -107,11 +95,31 @@ export default {
         response_type: 'comment'
       }).then(res => {
         // console.log(res)
+        const results = res.data.data.results
+        results.forEach(article => {
+          article.statusDisabled = false
+        })
         this.articles = res.data.data.results
+      })
+    },
+    onStatusChange (article) {
+      article.statusDisabled = true
+      // 请求提交修改
+      updateCommentStatus(article.id.toString(), article.comment_status).then(res => {
+        // console.log(res)
+        article.statusDisabled = false
+        this.$message({
+          type: 'success',
+          message: article.comment_status ? '开启文章评论状态' : '关闭文章评论状态'
+        })
       })
     }
   }
 }
 </script>
 
-<style lang='less' scoped></style>
+<style lang='less' scoped>
+.table-list {
+  margin-bottom: 30px;
+}
+</style>
