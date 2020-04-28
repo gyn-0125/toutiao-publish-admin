@@ -32,6 +32,8 @@
           </el-form>
         </el-col>
         <el-col :offset="2" :span="4">
+          <!-- <p @click="$refs.file.click()">点击修改头像</p> -->
+          <label for="file">
             <el-avatar
               shape="square"
               :size="150"
@@ -39,9 +41,29 @@
               :src="user.photo"
             ></el-avatar>
             <p>点击修改头像</p>
+          </label>
+          <input
+            id="file"
+            type="file"
+            hidden
+            ref="file"
+            @change="onFileChange"
+          >
         </el-col>
       </el-row>
     </el-card>
+
+    <el-dialog
+      title="修改头像"
+      :visible.sync="dialogVisible"
+      append-to-body
+    >
+      <img width="150" :src="previewImage" alt="">
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -71,7 +93,9 @@ export default {
         mobile: '',
         name: '',
         photo: ''
-      } // 用户资料
+      }, // 用户资料
+      dialogVisible: false,
+      previewImage: '' // 预览图片
     }
   },
   computed: {},
@@ -88,6 +112,16 @@ export default {
       getUserProfile().then(res => {
         this.user = res.data.data
       })
+    },
+    onFileChange () {
+      // 处理图片预览
+      const file = this.$refs.file
+      const blobData = window.URL.createObjectURL(file.files[0])
+      this.previewImage = blobData
+      // 展示弹出层，预览用户选择
+      this.dialogVisible = true
+      // 解决选择相同文件不出发change事件
+      this.$refs.file.value = ''
     }
   }
 }
