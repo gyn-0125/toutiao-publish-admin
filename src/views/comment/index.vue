@@ -9,21 +9,41 @@
         </el-breadcrumb>
       </div>
       <el-table
-        :data="tableData"
-        style="width: 100%">
+        :data="articles"
+        class="table-list"
+        style="width: 100%"
+        stripe>
         <el-table-column
-          prop="date"
-          label="日期"
-          width="180">
+          prop="title"
+          label="标题"
+        >
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="姓名"
-          width="180">
+          prop="total_comment_count"
+          label="总评论数"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="fans_comment_count"
+          label="粉丝评论数">
         </el-table-column>
         <el-table-column
           prop="address"
-          label="地址">
+          label="状态">
+          <template slot-scope="scope">
+            {{ scope.row.comment_status ? '正常' : '关闭' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="操作">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.comment_status"
+              active-color="#13ce66"
+              inactive-color="#ff4949">
+            </el-switch>
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
@@ -41,6 +61,8 @@
 </template>
 
 <script>
+import { getArticles } from '@/api/article'
+
 export default {
   name: '',
   props: {},
@@ -63,12 +85,15 @@ export default {
         date: '2016-05-03',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      }],
+      articles: []
     }
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    this.loadArticles()
+  },
   mounted () {},
   methods: {
     handleSizeChange () {
@@ -76,6 +101,14 @@ export default {
     },
     handleCurrentChange () {
       console.log()
+    },
+    loadArticles () {
+      getArticles({
+        response_type: 'comment'
+      }).then(res => {
+        // console.log(res)
+        this.articles = res.data.data.results
+      })
     }
   }
 }
