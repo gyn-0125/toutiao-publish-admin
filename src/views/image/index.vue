@@ -41,14 +41,30 @@
           >
           </el-image>
           <div class="image-action">
-            <i
+            <el-button
+              type="warning"
+              :icon="img.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"
+              circle
+              size="small"
+              @click="onCollect(img)"
+              :loading="img.loading"
+            ></el-button>
+            <el-button
+              size="small"
+              type="danger"
+              icon="el-icon-delete-solid"
+              circle
+              :loading="img.loading"
+              @click="onDelete(img)"
+            ></el-button>
+            <!-- <i
               :class="{
                 'el-icon-star-on': img.is_collected,
                 'el-icon-star-off': !img.is_collected
               }"
               @click="onCollect(img)"
             ></i>
-            <i class="el-icon-delete-solid"></i>
+            <i class="el-icon-delete-solid"></i> -->
           </div>
         </el-col>
       </el-row>
@@ -124,7 +140,11 @@ export default {
         page,
         per_page: this.pageSize
       }).then(res => {
-        this.images = res.data.data.results
+        const results = res.data.data.results
+        results.forEach(img => {
+          img.loading = false
+        })
+        this.images = results
         this.totalCount = res.data.data.total_count
       })
     },
@@ -144,8 +164,11 @@ export default {
       this.loadImages(page)
     },
     onCollect (img) {
+      // 展示loading
+      img.loading = true
       collectImage(img.id, !img.is_collected).then(res => {
         img.is_collected = !img.is_collected
+        img.loading = false
       })
     }
   }
