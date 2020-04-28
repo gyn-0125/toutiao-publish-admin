@@ -103,7 +103,8 @@
 <script>
 import {
   getImages,
-  collectImage
+  collectImage,
+  deleteImage
 } from '@/api/image'
 
 export default {
@@ -168,6 +169,13 @@ export default {
       img.loading = true
       collectImage(img.id, !img.is_collected).then(res => {
         img.is_collected = !img.is_collected
+        img.loading = false
+      })
+    },
+    onDelete (img) {
+      img.loading = true
+      deleteImage(img.id).then(res => {
+        this.loadImages(this.page)
         img.loading = false
       })
     }
