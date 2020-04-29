@@ -57,8 +57,16 @@
       title="修改头像"
       :visible.sync="dialogVisible"
       append-to-body
+      @opened="onDialogOpened"
+      @close="onDialogClosed"
     >
-      <img width="150" :src="previewImage" alt="">
+      <div class="preview-image-wrap">
+        <img
+          class="preview-image"
+          :src="previewImage"
+          ref="preview-image"
+        >
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -69,6 +77,8 @@
 
 <script>
 import { getUserProfile } from '@/api/user'
+import 'cropperjs/dist/cropper.css'
+import Cropper from 'cropperjs'
 
 export default {
   name: 'SettingsIndex',
@@ -95,7 +105,8 @@ export default {
         photo: ''
       }, // 用户资料
       dialogVisible: false,
-      previewImage: '' // 预览图片
+      previewImage: '', // 预览图片
+      cropper: null
     }
   },
   computed: {},
@@ -122,9 +133,37 @@ export default {
       this.dialogVisible = true
       // 解决选择相同文件不出发change事件
       this.$refs.file.value = ''
-    }
+    },
+    onDialogOpened () {
+      const image = this.$refs['preview-image']
+      // 初始化裁切器
+      if (this.cropper) {
+        this.cropper.replace(this.previewImage)
+        return
+      }
+      this.cropper = new Cropper(image, {
+        aspectRatio: 16 / 9,
+        crop (event) {
+          console.log(event.detail.x)
+          console.log(event.detail.scaleY)
+        }
+      })
+    },
+    onDialogClosed () {}
   }
 }
 </script>
 
-<style lang='less' scoped></style>
+<style lang='less' scoped>
+.preview-image-wrap {
+  /* Ensure the size of the image fit the container perfectly */
+  .preview-image {
+    display: block;
+
+    /* This rule is very important, please don't ignore this */
+    max-width: 100%;
+    height: 200px;
+  }
+}
+
+</style>
