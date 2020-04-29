@@ -71,6 +71,7 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button
           type="primary"
+          :loading="updatePhotoLoading"
           @click="onUpdatePhoto"
         >确 定</el-button>
       </span>
@@ -112,7 +113,8 @@ export default {
       }, // 用户资料
       dialogVisible: false,
       previewImage: '', // 预览图片
-      cropper: null
+      cropper: null,
+      updatePhotoLoading: false // 更新用户头像
     }
   },
   computed: {},
@@ -150,8 +152,8 @@ export default {
       this.cropper = new Cropper(image, {
         viewMode: 1,
         dragMode: 'none',
-        aspectRatio: 1,
-        cropBoxMovable: false
+        aspectRatio: 1
+        // cropBoxMovable: false
       })
     },
     onDialogClosed () {
@@ -159,6 +161,7 @@ export default {
       // this.cropper.destory()
     },
     onUpdatePhoto () {
+      this.updatePhotoLoading = true
       // 获取裁切的图片对象
       this.cropper.getCroppedCanvas().toBlob(file => {
         const fd = new FormData()
@@ -169,6 +172,11 @@ export default {
           this.dialogVisible = false
           // 直接把裁切结果的文件对象转为 blob 数据本地预览
           this.user.photo = window.URL.createObjectURL(file)
+          this.updatePhotoLoading = false
+          this.$message({
+            type: 'success',
+            message: '更新头像成功'
+          })
         })
       })
     }
