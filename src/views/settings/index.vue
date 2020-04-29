@@ -69,14 +69,20 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="onUpdatePhoto"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getUserProfile } from '@/api/user'
+import {
+  getUserProfile,
+  updateUserPhoto
+} from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -142,14 +148,30 @@ export default {
         return
       }
       this.cropper = new Cropper(image, {
-        aspectRatio: 16 / 9,
-        crop (event) {
-          console.log(event.detail.x)
-          console.log(event.detail.scaleY)
-        }
+        viewMode: 1,
+        dragMode: 'none',
+        aspectRatio: 1,
+        cropBoxMovable: false
       })
     },
-    onDialogClosed () {}
+    onDialogClosed () {
+      // 对话框关闭，销毁裁切器
+      // this.cropper.destory()
+    },
+    onUpdatePhoto () {
+      // 获取裁切的图片对象
+      this.cropper.getCroppedCanvas().toBlob(file => {
+        const fd = new FormData()
+        fd.append('photo', file)
+        updateUserPhoto(fd).then(res => {
+          // console.log(res)
+          // 关闭对话框
+          this.dialogVisible = false
+          // 直接把裁切结果的文件对象转为 blob 数据本地预览
+          this.user.photo = window.URL.createObjectURL(file)
+        })
+      })
+    }
   }
 }
 </script>
