@@ -91,6 +91,7 @@ import {
 } from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
+import globalBus from '@/utils/global-bus'
 
 export default {
   name: 'SettingsIndex',
@@ -140,6 +141,9 @@ export default {
         })
         // 关闭loading状态
         this.updateProfileLoading = false
+
+        // 发布通知、用户信息已修改
+        globalBus.$emit('update-user', this.user)
       })
     },
     loadUser () {
@@ -192,6 +196,8 @@ export default {
             type: 'success',
             message: '更新头像成功'
           })
+
+          globalBus.$emit('update-user', this.user)
         })
       })
     }
