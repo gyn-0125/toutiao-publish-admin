@@ -10,20 +10,25 @@
       </div>
       <el-row>
         <el-col :span="15">
-          <el-form ref="form" :model="user" label-width="80px">
+          <el-form
+            ref="user-form"
+            :model="user"
+            :rules="formRules"
+            label-width="80px"
+          >
             <el-form-item label="编号">
               {{ user.id }}
             </el-form-item>
             <el-form-item label="手机">
               {{ user.mobile }}
             </el-form-item>
-            <el-form-item label="媒体名称">
+            <el-form-item label="媒体名称" prop="name">
               <el-input v-model="user.name"></el-input>
             </el-form-item>
-            <el-form-item label="媒体介绍">
+            <el-form-item label="媒体介绍" prop="intro">
               <el-input type="textarea" v-model="user.intro"></el-input>
             </el-form-item>
-            <el-form-item label="邮箱">
+            <el-form-item label="邮箱" prop="email">
               <el-input v-model="user.email"></el-input>
             </el-form-item>
             <el-form-item>
@@ -111,7 +116,20 @@ export default {
       previewImage: '', // 预览图片
       cropper: null,
       updatePhotoLoading: false, // 更新用户头像loading状态
-      updateProfileLoading: false
+      updateProfileLoading: false,
+      formRules: {
+        name: [
+          { required: true, message: '请输入媒体名称', trigger: 'blur' },
+          { min: 3, max: 7, message: '长度在 3 到 7 个字符', trigger: 'blur' }
+        ],
+        intro: [
+          { required: true, message: '请输入媒体介绍', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ]
+      }
     }
   },
   computed: {},
@@ -122,28 +140,33 @@ export default {
   mounted () {},
   methods: {
     onUpdateUser () {
-      // console.log('submit!')
-      // 表单验证
-      // 验证通过提交表单
-      // 开启loading状态
-      this.updateProfileLoading = true
-      const { name, intro, email } = this.user
-      updateUserProfile({
-        name,
-        intro,
-        email
-      }).then(res => {
-        // this.user = res.data.data
-        // console.log(res)
-        this.$message({
-          type: 'success',
-          message: '保存成功'
-        })
-        // 关闭loading状态
-        this.updateProfileLoading = false
+      this.$refs['user-form'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        // console.log('submit!')
+        // 表单验证
+        // 验证通过提交表单
+        // 开启loading状态
+        this.updateProfileLoading = true
+        const { name, intro, email } = this.user
+        updateUserProfile({
+          name,
+          intro,
+          email
+        }).then(res => {
+          // this.user = res.data.data
+          // console.log(res)
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          // 关闭loading状态
+          this.updateProfileLoading = false
 
-        // 发布通知、用户信息已修改
-        globalBus.$emit('update-user', this.user)
+          // 发布通知、用户信息已修改
+          globalBus.$emit('update-user', this.user)
+        })
       })
     },
     loadUser () {
