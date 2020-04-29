@@ -10,7 +10,7 @@
       </div>
       <el-row>
         <el-col :span="15">
-          <el-form ref="form" :model="form" label-width="80px">
+          <el-form ref="form" :model="user" label-width="80px">
             <el-form-item label="编号">
               {{ user.id }}
             </el-form-item>
@@ -27,7 +27,11 @@
               <el-input v-model="user.email"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">保存设置</el-button>
+              <el-button
+                type="primary"
+                @click="onUpdateUser"
+                :loading="updateProfileLoading"
+              >保存设置</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -82,7 +86,8 @@
 <script>
 import {
   getUserProfile,
-  updateUserPhoto
+  updateUserPhoto,
+  updateUserProfile
 } from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
@@ -93,16 +98,6 @@ export default {
   components: {},
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       user: {
         email: '',
         id: null,
@@ -114,7 +109,8 @@ export default {
       dialogVisible: false,
       previewImage: '', // 预览图片
       cropper: null,
-      updatePhotoLoading: false // 更新用户头像
+      updatePhotoLoading: false, // 更新用户头像loading状态
+      updateProfileLoading: false
     }
   },
   computed: {},
@@ -124,8 +120,27 @@ export default {
   },
   mounted () {},
   methods: {
-    onSubmit () {
-      console.log('submit!')
+    onUpdateUser () {
+      // console.log('submit!')
+      // 表单验证
+      // 验证通过提交表单
+      // 开启loading状态
+      this.updateProfileLoading = true
+      const { name, intro, email } = this.user
+      updateUserProfile({
+        name,
+        intro,
+        email
+      }).then(res => {
+        // this.user = res.data.data
+        // console.log(res)
+        this.$message({
+          type: 'success',
+          message: '保存成功'
+        })
+        // 关闭loading状态
+        this.updateProfileLoading = false
+      })
     },
     loadUser () {
       getUserProfile().then(res => {
