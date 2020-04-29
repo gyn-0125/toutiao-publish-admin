@@ -11,16 +11,29 @@
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="粉丝列表" name="first">
           <el-row :gutter="10">
-            <el-col class="fans-item">
-              <el-image class="fans-image"></el-image>
-              <p>名字</p>
-              <el-button>关注</el-button>
+            <el-col
+              class="fans-item"
+              v-for="(fol, index) in follower"
+              :key="index"
+            >
+              <el-image
+                class="fans-image"
+                :src="fol.photo"
+              ></el-image>
+              <p class="fans-id">{{ fol.name }}</p>
+              <span
+                class="fans-button"
+              >+关注</span>
             </el-col>
           </el-row>
           <el-pagination
+            background
             layout="prev, pager, next"
-            :total="1000">
-          </el-pagination>
+            :total="totalCount"
+            :page-size="pageSize"
+            :current-page.sync="page"
+            @current-change="onPageChange"
+          />
         </el-tab-pane>
         <el-tab-pane label="粉丝画像" name="second">
           <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
@@ -33,6 +46,7 @@
 
 <script>
 import echarts from 'echarts'
+import { getFollowers } from '@/api/followers'
 
 export default {
   name: 'FansIndex',
@@ -40,12 +54,18 @@ export default {
   components: {},
   data () {
     return {
-      activeName: 'first'
+      activeName: 'first',
+      follower: [],
+      totalCount: 0, // 总页数大小
+      pageSize: 20, // 每页大小
+      page: 1 // 当前页码
     }
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    this.loadFollowers(1)
+  },
   mounted () {
     // 初始化图表
     var myChart = echarts.init(this.$refs.main)
@@ -75,6 +95,22 @@ export default {
   methods: {
     handleClick () {
       // console.log(tab, event)
+    },
+    loadFollowers (page = 1) {
+      this.page = page
+      getFollowers({
+        page,
+        per_page: this.pageSize // 每页数量
+      }).then(res => {
+        const results = res.data.data.results
+        this.follower = results
+        this.totalCount = res.data.data.total_count
+        // console.log(results)
+      })
+    },
+    onPageChange (page) {
+      // console.log(page)
+      this.loadFollowers(page)
     }
   }
 }
@@ -82,6 +118,8 @@ export default {
 
 <style lang='less' scoped>
 .fans-item {
+  display: flex;
+  align-content: space-around;
   border: 1px dashed #ddd;
   width: 120px;
   height: 170px;
@@ -91,5 +129,28 @@ export default {
   margin-left: 5px;
   margin-right: 50px;
   margin-bottom: 15px;
+}
+.fans-image {
+  display: block;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+.fans-id {
+  font-size: 12px;
+}
+.fans-button {
+  display: inline-block;
+  font-size: 12px;
+  color: #409eff;
+  background-color: #ecf5ff;
+  text-align: center;
+  border-radius: 3px;
+  border: 1px solid #409eff;
+  width: 40px;
+  height: 25px;
+  padding: 0 8px;
+  line-height: 25px;
 }
 </style>
