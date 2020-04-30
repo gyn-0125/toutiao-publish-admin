@@ -96,4 +96,5 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// 在组件中使用的this.$router 其实就是这个模块的 router
 export default router
