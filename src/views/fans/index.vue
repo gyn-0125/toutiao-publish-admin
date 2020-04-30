@@ -56,7 +56,7 @@ export default {
   components: {},
   data () {
     return {
-      activeName: 'first',
+      activeName: 'second',
       follower: [],
       totalCount: 0, // 总页数大小
       pageSize: 20, // 每页大小
