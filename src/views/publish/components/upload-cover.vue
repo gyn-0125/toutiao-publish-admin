@@ -16,6 +16,8 @@
             <image-list
               :is-show-add="false"
               :is-show-action="false"
+              is-show-selected
+              ref="image-list"
             />
           </el-tab-pane>
           <el-tab-pane label="上传图片" name="second">
@@ -96,6 +98,15 @@ export default {
           // this.$emit('update-cover', res.data.data.url)
           this.$emit('input', res.data.data.url)
         })
+      } else if (this.activeName === 'first') {
+        const imageList = this.$refs['image-list']
+        const selected = imageList.selected
+        if (selected === null) {
+          this.$message('请选择图片')
+          return
+        }
+        this.dialogVisible = false
+        this.$emit('input', imageList.images[selected].url)
       }
     }
   }

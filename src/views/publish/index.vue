@@ -118,7 +118,7 @@ export default {
         title: '', // 文章标题
         content: '', // 文章内容
         cover: { // 文章封面
-          type: 0, // 文章类型
+          type: 1, // 文章类型
           images: [] // 封面图片的地址
         },
         channel_id: null

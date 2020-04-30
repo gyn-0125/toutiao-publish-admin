@@ -26,13 +26,17 @@
         v-for="(img, index) in images"
         :key="index"
         class="image-item"
+        @click.native="selected = index"
       >
         <el-image
           style="height: 100px"
           :src="img.url"
           fit="cover"
-        >
-        </el-image>
+        ></el-image>
+        <div
+          class="selected"
+          v-if="isShowSelected && selected === index"
+        ></div>
         <div v-if="isShowAction" class="image-action">
           <el-button
             type="warning"
@@ -109,6 +113,10 @@ export default {
     isShowAction: {
       type: Boolean,
       default: true
+    },
+    isShowSelected: {
+      type: Boolean,
+      default: false
     }
   },
   components: {},
@@ -123,7 +131,8 @@ export default {
       },
       totalCount: 0, // 总页数大小
       pageSize: 20, // 每页大小
-      page: 1 // 当前页码
+      page: 1, // 当前页码
+      selected: null // 选中的索引
     }
   },
   computed: {},
@@ -205,5 +214,17 @@ export default {
   bottom: 4px;
   left: 5px;
   right: 5px;
+}
+.selected {
+  background: url('./selected.png') no-repeat;
+  background-size: cover;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
