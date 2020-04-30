@@ -21,9 +21,11 @@
                 :src="fol.photo"
               ></el-image>
               <p class="fans-id">{{ fol.name }}</p>
-              <span
-                class="fans-button"
-              >+关注</span>
+              <el-button
+                type="primary"
+                plain
+                size="mini"
+              >+关注</el-button>
             </el-col>
           </el-row>
           <el-pagination
@@ -139,18 +141,5 @@ export default {
 }
 .fans-id {
   font-size: 12px;
-}
-.fans-button {
-  display: inline-block;
-  font-size: 12px;
-  color: #409eff;
-  background-color: #ecf5ff;
-  text-align: center;
-  border-radius: 3px;
-  border: 1px solid #409eff;
-  width: 40px;
-  height: 25px;
-  padding: 0 8px;
-  line-height: 25px;
 }
 </style>
