@@ -4,7 +4,7 @@
       <img
         class="cover-image"
         ref="cover-image"
-        :src="coverImage"
+        :src="value"
       >
       <el-dialog
         title="选择封面"
@@ -45,7 +45,8 @@ import { uploadImage } from '@/api/image'
 
 export default {
   name: 'UploadCover',
-  props: ['cover-image'],
+  // props: ['cover-image'],
+  props: ['value'],
   components: {},
   data () {
     return {
@@ -75,7 +76,7 @@ export default {
         const file = this.$refs.file.files[0]
         if (!file) {
           this.$message('请选择文件')
-          return false
+          return
         }
         const fd = new FormData()
         fd.append('image', file)
@@ -86,7 +87,8 @@ export default {
           // 展示上传的图片
           this.$refs['cover-image'].src = res.data.data.url
           // 将图片地址发送给父组件
-          this.$emit('update-cover', res.data.data.url)
+          // this.$emit('update-cover', res.data.data.url)
+          this.$emit('input', res.data.data.url)
         })
       }
     }

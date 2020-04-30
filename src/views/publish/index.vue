@@ -42,9 +42,14 @@
             <upload-cover
               :key="cover"
               v-for="(cover, index) in article.cover.type"
+              v-model="article.cover.images[index]"
+            />
+            <!-- <upload-cover
+              :key="cover"
+              v-for="(cover, index) in article.cover.type"
               :cover-image = "article.cover.images[index]"
               @update-cover = "onUpdateCover(index, $event)"
-            />
+            /> -->
           </template>
         </el-form-item>
         <el-form-item label="频道" prop="channel_id">
@@ -224,10 +229,10 @@ export default {
         // 模板绑定展示
         this.article = res.data.data
       })
-    },
-    onUpdateCover (index, url) {
-      this.article.cover.images[index] = url
     }
+    // onUpdateCover (index, url) {
+    //   this.article.cover.images[index] = url
+    // }
   }
 }
 </script>
