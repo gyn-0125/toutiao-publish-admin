@@ -120,8 +120,6 @@ export default {
 
 <style lang='less' scoped>
 .fans-item {
-  display: flex;
-  align-content: space-around;
   border: 1px dashed #ddd;
   width: 120px;
   height: 170px;
