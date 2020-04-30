@@ -13,7 +13,10 @@
       >
         <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="素材库" name="first">
-            素材库
+            <image-list
+              :is-show-add="false"
+              :is-show-action="false"
+            />
           </el-tab-pane>
           <el-tab-pane label="上传图片" name="second">
             <input
@@ -42,12 +45,15 @@
 
 <script>
 import { uploadImage } from '@/api/image'
+import ImageList from '@/views/image/components/image-list'
 
 export default {
   name: 'UploadCover',
   // props: ['cover-image'],
   props: ['value'],
-  components: {},
+  components: {
+    ImageList
+  },
   data () {
     return {
       activeName: 'second',
