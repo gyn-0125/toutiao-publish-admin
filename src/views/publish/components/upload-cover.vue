@@ -21,13 +21,19 @@
             />
           </el-tab-pane>
           <el-tab-pane label="上传图片" name="second">
+            <label for="file">
+              <img
+                width="100"
+                ref="preview-image"
+                class="file-image"
+              >
+            </label>
             <input
+              id="file"
               type="file"
               ref="file"
-              @change="onFileChange">
-            <img
-              width="100"
-              ref="preview-image"
+              @change="onFileChange"
+              hidden
             >
           </el-tab-pane>
         </el-tabs>
@@ -115,12 +121,25 @@ export default {
 
 <style lang='less' scoped>
 .cover-wrap {
+  float: left;
+  margin-right: 10px;
   width: 150px;
   height: 120px;
-  border: 1px solid #ccc;
+  background: url('./pic_bg.png') no-repeat 50%;
+  opacity: 0.3;
+  border: 1px dashed #ccc;
   .cover-image {
-      height: 120px;
-      max-width: 100%;
+      width: 100%;
+      height: 100%;
   }
+}
+.file-image {
+  margin-left: 230px;
+  width: 200px;
+  height: 180px;
+  // border: 1px border #ccc;
+  background: url('./pic_bg.png') no-repeat 50%;
+  opacity: 0.3;
+  border: 1px dashed #ccc;
 }
 </style>
