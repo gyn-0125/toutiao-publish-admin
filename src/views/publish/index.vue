@@ -198,28 +198,27 @@ export default {
       })
     },
     onPublish (draft = false) {
-      this.$refs['publish-form'].validate(valid => {
+      this.$refs['publish-form'].validate(async valid => {
         if (!valid) {
           return
         }
         const articleId = this.$route.query.id
         if (articleId) {
-          updateArticle(articleId, this.article, draft).then(res => {
-            // console.log(res)
-            this.$message({
-              message: `${draft ? '存入草稿' : '发布'}成功`,
-              type: 'success'
-            })
-            this.$router.push('/article')
+          await updateArticle(articleId, this.article, draft)
+          // console.log(res)
+          this.$message({
+            message: `${draft ? '存入草稿' : '发布'}成功`,
+            type: 'success'
           })
-        } else {
-          addArticle(this.article, draft).then(res => {
-            this.$message({
-              message: '发布成功',
-              type: 'success'
-            })
-          })
+          this.$router.push('/article')
+
+          return
         }
+        await addArticle(this.article, draft)
+        this.$message({
+          message: '发布成功',
+          type: 'success'
+        })
       })
     },
     loadArticle () {

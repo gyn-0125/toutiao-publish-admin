@@ -205,24 +205,24 @@ export default {
   },
   mounted () {},
   methods: {
-    loadArticles (page = 1) {
+    async loadArticles (page = 1) {
       // 展示加载中
       this.loading = true
-      getArticles({
+      const res = await getArticles({
         page,
         per_page: this.pageSize,
         status: this.status,
         channel_id: this.channelId,
         begin_pubdate: this.rangeDate ? this.rangeDate[0] : null, // 开始日期
         end_pubdate: this.rangeDate ? this.rangeDate[1] : null // 截止日期
-      }).then(res => {
-        const { results, total_count: totalCount } = res.data.data
-        this.articles = results
-        this.totalCount = totalCount
-        // console.log(res)
-        // 关闭加载中的loading
-        this.loading = false
       })
+
+      const { results, total_count: totalCount } = res.data.data
+      this.articles = results
+      this.totalCount = totalCount
+      // console.log(res)
+      // 关闭加载中的loading
+      this.loading = false
     },
     onSubmit () {
       console.log('submit!')

@@ -140,7 +140,7 @@ export default {
   mounted () {},
   methods: {
     onUpdateUser () {
-      this.$refs['user-form'].validate(valid => {
+      this.$refs['user-form'].validate(async valid => {
         if (!valid) {
           return
         }
@@ -150,23 +150,21 @@ export default {
         // 开启loading状态
         this.updateProfileLoading = true
         const { name, intro, email } = this.user
-        updateUserProfile({
+        await updateUserProfile({
           name,
           intro,
           email
-        }).then(res => {
-          // this.user = res.data.data
-          // console.log(res)
-          this.$message({
-            type: 'success',
-            message: '保存成功'
-          })
-          // 关闭loading状态
-          this.updateProfileLoading = false
-
-          // 发布通知、用户信息已修改
-          globalBus.$emit('update-user', this.user)
         })
+        // this.user = res.data.data
+        // console.log(res)
+        this.$message({
+          type: 'success',
+          message: '保存成功'
+        })
+        // 关闭loading状态
+        this.updateProfileLoading = false
+        // 发布通知、用户信息已修改
+        globalBus.$emit('update-user', this.user)
       })
     },
     loadUser () {
@@ -205,23 +203,21 @@ export default {
     onUpdatePhoto () {
       this.updatePhotoLoading = true
       // 获取裁切的图片对象
-      this.cropper.getCroppedCanvas().toBlob(file => {
+      this.cropper.getCroppedCanvas().toBlob(async file => {
         const fd = new FormData()
         fd.append('photo', file)
-        updateUserPhoto(fd).then(res => {
-          // console.log(res)
-          // 关闭对话框
-          this.dialogVisible = false
-          // 直接把裁切结果的文件对象转为 blob 数据本地预览
-          this.user.photo = window.URL.createObjectURL(file)
-          this.updatePhotoLoading = false
-          this.$message({
-            type: 'success',
-            message: '更新头像成功'
-          })
-
-          globalBus.$emit('update-user', this.user)
+        await updateUserPhoto(fd)
+        // console.log(res)
+        // 关闭对话框
+        this.dialogVisible = false
+        // 直接把裁切结果的文件对象转为 blob 数据本地预览
+        this.user.photo = window.URL.createObjectURL(file)
+        this.updatePhotoLoading = false
+        this.$message({
+          type: 'success',
+          message: '更新头像成功'
         })
+        globalBus.$emit('update-user', this.user)
       })
     }
   }

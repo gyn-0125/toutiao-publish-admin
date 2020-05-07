@@ -91,7 +91,41 @@ export default {
         this.login()
       })
     },
-    login () {
+    // login () {
+    //   // 开启登录中 loading...
+    //   this.loginLoading = true
+
+    //   // 对于代码中的请求操作
+    //   // 1. 接口请求可能需要重用
+    //   // 2. 实际工作中，接口非常容易变动
+    //   // 我们建议的做法是把所有的请求都封装成函数然后同意组织在模块中使用
+    //   // 这样的做法好处是：管理维护更方便，更好重用
+    //   login(this.user).then(res => {
+    //     // console.log(res)
+    //     // 登录成功
+    //     this.$message({
+    //       message: '登录成功',
+    //       type: 'success'
+    //     })
+    //     // 关闭 loading
+    //     this.loginLoading = false
+
+    //     // 将接口返回的用户相关数据放到本地存储，方便应用数据共享
+    //     window.localStorage.setItem('user', JSON.stringify(res.data.data))
+
+    //     // 跳转到首页
+    //     this.$router.push({
+    //       name: 'home'
+    //     })
+    //   }).catch(err => {
+    //     console.log('登录失败', err)
+    //     // 登录失败
+    //     this.$message.error('登录失败，手机号或验证码错误')
+    //     // 关闭 loading
+    //     this.loginLoading = false
+    //   })
+    // }
+    async login () {
       // 开启登录中 loading...
       this.loginLoading = true
 
@@ -100,8 +134,9 @@ export default {
       // 2. 实际工作中，接口非常容易变动
       // 我们建议的做法是把所有的请求都封装成函数然后同意组织在模块中使用
       // 这样的做法好处是：管理维护更方便，更好重用
-      login(this.user).then(res => {
-        // console.log(res)
+      try {
+        const res = await login(this.user)
+
         // 登录成功
         this.$message({
           message: '登录成功',
@@ -109,21 +144,19 @@ export default {
         })
         // 关闭 loading
         this.loginLoading = false
-
         // 将接口返回的用户相关数据放到本地存储，方便应用数据共享
         window.localStorage.setItem('user', JSON.stringify(res.data.data))
-
         // 跳转到首页
         this.$router.push({
           name: 'home'
         })
-      }).catch(err => {
+      } catch (err) {
         console.log('登录失败', err)
         // 登录失败
         this.$message.error('登录失败，手机号或验证码错误')
         // 关闭 loading
         this.loginLoading = false
-      })
+      }
     }
   }
 }
