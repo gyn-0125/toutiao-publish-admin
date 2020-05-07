@@ -1,17 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// webpack 就会把所有通过 () => import('资源路径') 加载的资源都分割成一个一个独立的代码文件块 chunk
+const Login = () => import('@/views/login/')
+const Home = () => import(/* webpackChunkName: "group-foo" */ '@/views/home/')
+const Layout = () => import(/* webpackChunkName: "group-foo" */ '@/views/layout/')
+const Article = () => import(/* webpackChunkName: "group-foo" */ '@/views/article/')
+const Publish = () => import('@/views/publish/')
+const Image = () => import('@/views/image/')
+const Comment = () => import('@/views/comment/')
+const Settings = () => import('@/views/settings/')
+const Fans = () => import('@/views/fans/')
+
 // @ 表示src目录
 // 好处：它不受当前文件路径影响
-import Login from '@/views/login/'
-import Home from '@/views/home/'
-import Layout from '@/views/layout/'
-import Article from '@/views/article/'
-import Publish from '@/views/publish/'
-import Image from '@/views/image/'
-import Comment from '@/views/comment/'
-import Settings from '@/views/settings/'
-import Fans from '@/views/fans/'
+// import Login from '@/views/login/'
+// import Home from '@/views/home/'
+// import Layout from '@/views/layout/'
+// import Article from '@/views/article/'
+// import Publish from '@/views/publish/'
+// import Image from '@/views/image/'
+// import Comment from '@/views/comment/'
+// import Settings from '@/views/settings/'
+// import Fans from '@/views/fans/'
 
 Vue.use(VueRouter)
 
