@@ -7,6 +7,15 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1770215_em3rbf4816l.css">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- element-ui 的样式资源 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.13.1/lib/theme-chalk/index.css">
+    <!-- element-ui 依赖了Vue，所以这里也必须把vue引进来 -->
+    <!-- 注意：vue必须在element之前 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+    <!-- element-ui 脚本资源 -->
+    <script src="https://cdn.jsdelivr.net/npm/element-ui@2.13.1/lib/index.js"></script>
+    <!-- echarts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
   </head>
   <body>
     <noscript>
